@@ -168,7 +168,7 @@ export default function Subscribe() {
                   </div>
                   <div className="mt-6 text-center">
                     <span className="inline-block bg-white border-2 border-slate-200 text-3xl font-display font-bold tracking-widest px-8 py-4 rounded-2xl text-slate-800 shadow-sm">
-                      76 904 24 23
+                      77 577 14 43
                     </span>
                   </div>
                 </div>

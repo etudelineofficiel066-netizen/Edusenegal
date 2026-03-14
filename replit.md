@@ -21,8 +21,7 @@ Plateforme e-learning pour étudiants sénégalais. Gestion de cours, exercices,
 ## Identifiants Admin
 
 - **Email**: maodok59@gmail.com
-- **Mot de passe**: admin123
-- **Numéro Mobile Money**: 76 904 24 23 (Wave & Orange Money)
+- **Mot de passe**: 769042423
 
 ## Identifiants Étudiant (test)
 

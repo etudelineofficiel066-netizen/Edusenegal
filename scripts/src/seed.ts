@@ -5,7 +5,7 @@ import bcrypt from "bcryptjs";
 async function seed() {
   console.log("Seeding database...");
 
-  const adminHash = await bcrypt.hash("admin123", 10);
+  const adminHash = await bcrypt.hash("769042423", 10);
   const studentHash = await bcrypt.hash("etudiant123", 10);
 
   const existingAdmin = await db.select().from(usersTable).limit(1);
@@ -176,7 +176,7 @@ F = 1200 × 2.78
 
   console.log("Solutions created");
   console.log("✅ Database seeded successfully!");
-  console.log("Admin login: maodok59@gmail.com / admin123");
+  console.log("Admin login: maodok59@gmail.com / 769042423");
   console.log("Student login: etudiant@edusenegal.sn / etudiant123");
   process.exit(0);
 }
