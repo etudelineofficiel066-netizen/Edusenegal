@@ -40,7 +40,6 @@ export * from "./subscriptionTypeAbonnement";
 export * from "./subscriptionWithUser";
 export * from "./subscriptionWithUserStatut";
 export * from "./subscriptionWithUserTypeAbonnement";
-export * from "./uploadPaymentScreenshotBody";
 export * from "./uploadResponse";
 export * from "./user";
 export * from "./userRole";
