@@ -16,7 +16,7 @@ async function seed() {
 
   const [admin] = await db.insert(usersTable).values({
     nom: "Administrateur",
-    email: "admin@edusenegal.sn",
+    email: "maodok59@gmail.com",
     motDePasseHash: adminHash,
     role: "admin",
   }).returning();
@@ -176,7 +176,7 @@ F = 1200 × 2.78
 
   console.log("Solutions created");
   console.log("✅ Database seeded successfully!");
-  console.log("Admin login: admin@edusenegal.sn / admin123");
+  console.log("Admin login: maodok59@gmail.com / admin123");
   console.log("Student login: etudiant@edusenegal.sn / etudiant123");
   process.exit(0);
 }
