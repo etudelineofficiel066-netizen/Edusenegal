@@ -1,0 +1,21 @@
+packages:
+  "framer-motion": "For page transitions, list animations, and smooth UI interactions"
+  "date-fns": "For elegant date formatting in history and course creation dates"
+  "lucide-react": "For beautiful consistent iconography"
+  "clsx": "For conditional class name merging"
+  "tailwind-merge": "For merging tailwind classes safely"
+  "@hookform/resolvers": "Zod validation integration for robust forms"
+  "react-hook-form": "For performant and clean form state management"
+
+images:
+  - path: "artifacts/elearning/public/images/hero-bg.png"
+    description: "Warm, professional photography of happy African students studying together in a modern bright educational setting, soft lighting, aspirational"
+    aspect_ratio: "16:9"
+  - path: "artifacts/elearning/public/images/pattern.png"
+    description: "Subtle, minimal warm geometric abstract pattern background, very light beige and soft amber tones, corporate yet welcoming"
+    aspect_ratio: "16:9"
+
+notes:
+  - Using provided API client from @workspace/api-client-react for all data fetching.
+  - Relying on react-hook-form for forms to ensure smooth validation and state handling.
+  - Using wouter for fast and simple client-side routing.

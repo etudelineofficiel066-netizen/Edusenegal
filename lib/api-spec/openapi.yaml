@@ -1,0 +1,934 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: API specification for e-learning platform
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: users
+    description: User management
+  - name: courses
+    description: Course management
+  - name: exercises
+    description: Exercise management
+  - name: solutions
+    description: Solution management
+  - name: subscriptions
+    description: Subscription management
+  - name: payments
+    description: Payment management
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: registerUser
+      tags: [auth]
+      summary: Register a new student
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: loginUser
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logoutUser
+      tags: [auth]
+      summary: Logout user
+      responses:
+        "200":
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getCurrentUser
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /courses:
+    get:
+      operationId: listCourses
+      tags: [courses]
+      summary: List all courses
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: chapter
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of courses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Course"
+    post:
+      operationId: createCourse
+      tags: [courses]
+      summary: Create a course (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourseRequest"
+      responses:
+        "201":
+          description: Course created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+
+  /courses/{id}:
+    get:
+      operationId: getCourse
+      tags: [courses]
+      summary: Get a course
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Course
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CourseWithContent"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateCourse
+      tags: [courses]
+      summary: Update a course (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourseRequest"
+      responses:
+        "200":
+          description: Course updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+    delete:
+      operationId: deleteCourse
+      tags: [courses]
+      summary: Delete a course (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Course deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /courses/{id}/exercises:
+    get:
+      operationId: listCourseExercises
+      tags: [exercises]
+      summary: List exercises for a course
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of exercises
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Exercise"
+
+  /exercises:
+    post:
+      operationId: createExercise
+      tags: [exercises]
+      summary: Create an exercise (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExerciseRequest"
+      responses:
+        "201":
+          description: Exercise created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exercise"
+
+  /exercises/{id}:
+    put:
+      operationId: updateExercise
+      tags: [exercises]
+      summary: Update an exercise (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExerciseRequest"
+      responses:
+        "200":
+          description: Exercise updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exercise"
+    delete:
+      operationId: deleteExercise
+      tags: [exercises]
+      summary: Delete an exercise (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Exercise deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /exercises/{id}/solution:
+    get:
+      operationId: getExerciseSolution
+      tags: [solutions]
+      summary: Get solution for an exercise
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Solution
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Solution"
+        "403":
+          description: Subscription required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createSolution
+      tags: [solutions]
+      summary: Create a solution (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSolutionRequest"
+      responses:
+        "201":
+          description: Solution created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Solution"
+    put:
+      operationId: updateSolution
+      tags: [solutions]
+      summary: Update a solution (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSolutionRequest"
+      responses:
+        "200":
+          description: Solution updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Solution"
+
+  /subscriptions/my:
+    get:
+      operationId: getMySubscription
+      tags: [subscriptions]
+      summary: Get current user's active subscription
+      responses:
+        "200":
+          description: Subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+        "404":
+          description: No active subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /subscriptions/history:
+    get:
+      operationId: getSubscriptionHistory
+      tags: [subscriptions]
+      summary: Get subscription and payment history
+      responses:
+        "200":
+          description: History
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubscriptionHistory"
+
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      tags: [subscriptions]
+      summary: List all subscriptions (admin only)
+      responses:
+        "200":
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SubscriptionWithUser"
+
+  /payments:
+    post:
+      operationId: submitPayment
+      tags: [payments]
+      summary: Submit payment with screenshot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitPaymentRequest"
+      responses:
+        "201":
+          description: Payment submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+
+  /payments/pending:
+    get:
+      operationId: listPendingPayments
+      tags: [payments]
+      summary: List pending payments (admin only)
+      responses:
+        "200":
+          description: List of pending payments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentWithUser"
+
+  /payments/{id}/validate:
+    post:
+      operationId: validatePayment
+      tags: [payments]
+      summary: Validate a payment (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Payment validated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /payments/{id}/reject:
+    post:
+      operationId: rejectPayment
+      tags: [payments]
+      summary: Reject a payment (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Payment rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /upload/payment-screenshot:
+    post:
+      operationId: uploadPaymentScreenshot
+      tags: [payments]
+      summary: Upload payment screenshot
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "200":
+          description: Upload successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    UploadResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+
+    RegisterRequest:
+      type: object
+      properties:
+        nom:
+          type: string
+        email:
+          type: string
+          format: email
+        motDePasse:
+          type: string
+          minLength: 6
+      required:
+        - nom
+        - email
+        - motDePasse
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        motDePasse:
+          type: string
+      required:
+        - email
+        - motDePasse
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        message:
+          type: string
+      required:
+        - user
+        - message
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [etudiant, admin]
+        dateInscription:
+          type: string
+          format: date-time
+      required:
+        - id
+        - nom
+        - email
+        - role
+        - dateInscription
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+        titre:
+          type: string
+        description:
+          type: string
+        chapitre:
+          type: string
+        difficulte:
+          type: string
+          enum: [debutant, intermediaire, avance]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - titre
+        - description
+        - chapitre
+        - difficulte
+        - createdAt
+
+    CourseWithContent:
+      type: object
+      properties:
+        id:
+          type: integer
+        titre:
+          type: string
+        description:
+          type: string
+        contenu:
+          type: string
+          nullable: true
+        chapitre:
+          type: string
+        difficulte:
+          type: string
+          enum: [debutant, intermediaire, avance]
+        pdfUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        hasAccess:
+          type: boolean
+        exercises:
+          type: array
+          items:
+            $ref: "#/components/schemas/Exercise"
+      required:
+        - id
+        - titre
+        - description
+        - chapitre
+        - difficulte
+        - createdAt
+        - hasAccess
+        - exercises
+
+    CreateCourseRequest:
+      type: object
+      properties:
+        titre:
+          type: string
+        description:
+          type: string
+        contenu:
+          type: string
+        chapitre:
+          type: string
+        difficulte:
+          type: string
+          enum: [debutant, intermediaire, avance]
+        pdfUrl:
+          type: string
+      required:
+        - titre
+        - description
+        - chapitre
+        - difficulte
+
+    Exercise:
+      type: object
+      properties:
+        id:
+          type: integer
+        coursId:
+          type: integer
+        titre:
+          type: string
+        contenu:
+          type: string
+        difficulte:
+          type: string
+          enum: [debutant, intermediaire, avance]
+        hasSolution:
+          type: boolean
+      required:
+        - id
+        - coursId
+        - titre
+        - contenu
+        - difficulte
+        - hasSolution
+
+    CreateExerciseRequest:
+      type: object
+      properties:
+        coursId:
+          type: integer
+        titre:
+          type: string
+        contenu:
+          type: string
+        difficulte:
+          type: string
+          enum: [debutant, intermediaire, avance]
+      required:
+        - coursId
+        - titre
+        - contenu
+        - difficulte
+
+    Solution:
+      type: object
+      properties:
+        id:
+          type: integer
+        exerciseId:
+          type: integer
+        contenu:
+          type: string
+      required:
+        - id
+        - exerciseId
+        - contenu
+
+    CreateSolutionRequest:
+      type: object
+      properties:
+        contenu:
+          type: string
+      required:
+        - contenu
+
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        typeAbonnement:
+          type: string
+          enum: [1_mois, 3_mois, 9_mois]
+        dateDebut:
+          type: string
+          format: date-time
+        dateFin:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          enum: [actif, expiré, annulé]
+      required:
+        - id
+        - userId
+        - typeAbonnement
+        - dateDebut
+        - dateFin
+        - statut
+
+    SubscriptionWithUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userNom:
+          type: string
+        userEmail:
+          type: string
+        typeAbonnement:
+          type: string
+          enum: [1_mois, 3_mois, 9_mois]
+        dateDebut:
+          type: string
+          format: date-time
+        dateFin:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          enum: [actif, expiré, annulé]
+      required:
+        - id
+        - userId
+        - userNom
+        - userEmail
+        - typeAbonnement
+        - dateDebut
+        - dateFin
+        - statut
+
+    SubscriptionHistory:
+      type: object
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Subscription"
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payment"
+      required:
+        - subscriptions
+        - payments
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        typeAbonnement:
+          type: string
+          enum: [1_mois, 3_mois, 9_mois]
+        montant:
+          type: number
+        date:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          enum: [en_attente, confirmé, rejeté]
+        captureEcran:
+          type: string
+          nullable: true
+      required:
+        - id
+        - userId
+        - typeAbonnement
+        - montant
+        - date
+        - statut
+
+    PaymentWithUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userNom:
+          type: string
+        userEmail:
+          type: string
+        typeAbonnement:
+          type: string
+          enum: [1_mois, 3_mois, 9_mois]
+        montant:
+          type: number
+        date:
+          type: string
+          format: date-time
+        statut:
+          type: string
+          enum: [en_attente, confirmé, rejeté]
+        captureEcran:
+          type: string
+          nullable: true
+      required:
+        - id
+        - userId
+        - userNom
+        - userEmail
+        - typeAbonnement
+        - montant
+        - date
+        - statut
+
+    SubmitPaymentRequest:
+      type: object
+      properties:
+        typeAbonnement:
+          type: string
+          enum: [1_mois, 3_mois, 9_mois]
+        captureEcran:
+          type: string
+          nullable: true
+      required:
+        - typeAbonnement
